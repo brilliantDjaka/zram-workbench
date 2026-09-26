@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # bench.sh - MEASURE-ONLY zram benchmark. Never switches algorithm.
-#   devbox run bench [--bytes 16G --timeout 45 --settle 15 --repeats 2 --tag zstd:1]
+#   devbox run bench [--bytes 10G --timeout 30 --settle 8 --repeats 2 --tag zstd:1]
 # Metric groups: (1) ratio (2) speed (3) lag (4) cpu cost (5) stability.
 set -uo pipefail
 
 SYS="${ZRAM_SYS:-/sys/block/zram0}"
-BYTES="16G"; TIMEOUT=45; SETTLE=15; REPEATS=2; COOLDOWN=5
+BYTES="10G"; TIMEOUT=30; SETTLE=8; REPEATS=2; COOLDOWN=5
 OUT="results/results.csv"; TAG=""; PROBE_ITERS=200
 QUICK=0; EXTREME=0
 
 usage() {
-  echo "Usage: devbox run bench [--bytes 16G --timeout 45 --settle 15 --repeats 2 --tag SPEC --out FILE --probe-iters 200 --cooldown 5 --quick --extreme]"
+  echo "Usage: devbox run bench [--bytes 10G --timeout 30 --settle 8 --repeats 2 --tag SPEC --out FILE --probe-iters 200 --cooldown 5 --quick --extreme]"
   echo "  --quick:   4G/20s/settle 5/repeats 1 (smoke test)"
   echo "  --extreme: 20G/60s/settle 15 (replicates manual test)"
 }

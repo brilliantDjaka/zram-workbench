@@ -3,6 +3,13 @@
 Diary of completed work on this repo. Newest first: the most recent event
 section sits at the top; older events follow below.
 
+## 2026-09-26 17:27 - Default bench hog to safe 10G/30s/8s so plain bench-all won't OOM
+
+- **What:** Changed `bench.sh` built-in defaults from `16G/45s/15s` to `10G/30s/8s` (usage text updated too).
+- **Why:** Plain `devbox run bench-all` forwards no size flags, so it ran the old 16G defaults — the exact config `systemd-oomd` killed. The user prefers the short command, so the defaults themselves must be safe on this 14.9G box. Explicit flags and `--extreme` still override for bigger machines.
+- **Changes:** `scripts/bench.sh` lines 3, 9, 13: `BYTES="10G"; TIMEOUT=30; SETTLE=8`.
+- **Tests / Verification:** `bench.sh --help` shows new defaults; `bench-all.sh --dry-run` with no args forwards empty extras (defaults apply). Live 10G run previously verified clean (`bogo=65808/s, p99=32.5us`).
+
 ## 2026-09-26 17:20 - Diagnose systemd-oomd kill, add bench-all size passthrough, reset for 10G matrix
 
 - **What:** Diagnosed why the benchmark run died with a GNOME "device memory is nearly full" warning, patched `bench-all.sh` to forward hog-size flags, archived the unusable 16G rows, and verified a 10G hog runs clean.
