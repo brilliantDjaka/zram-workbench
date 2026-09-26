@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-dev/devbox/0.17.5/.schema/devbox.schema.json",
+  "packages": [
+    "stress-ng@latest",
+    "procps@latest",
+    "util-linux@latest",
+    "python3@latest",
+    "bash@latest",
+    "gawk@latest"
+  ],
+  "shell": {
+    "scripts": {
+      "apply": "bash scripts/apply-zram.sh \"$@\"",
+      "bench": "bash scripts/bench.sh \"$@\"",
+      "bench-all": "bash scripts/bench-all.sh \"$@\"",
+      "summarize": "python3 scripts/summarize.py \"$@\"",
+      "status": "bash scripts/status.sh"
+    }
+  }
+}

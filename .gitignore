@@ -1,0 +1,6 @@
+# devbox generated state / venv
+.devbox/
+.venv/
+
+# benchmark outputs (machine-specific, regenerated per run)
+results/
