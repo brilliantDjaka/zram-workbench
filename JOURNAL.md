@@ -3,6 +3,20 @@
 Diary of completed work on this repo. Newest first: the most recent event
 section sits at the top; older events follow below.
 
+## 2026-09-26 18:45 - Default hog timeout 30s to 35s for swap age-out + firefox room
+
+- **What:** Changed `bench.sh` built-in default `TIMEOUT` from 30 to 35 (usage text updated). `--quick` (20s) and `--extreme` (60s) unchanged.
+- **Why:** New per-repeat probes (swap-touch dirty + 3s age-out sleep + firefox cold-start) need a ~27s window (`timeout - settle`) so the hog stays alive through the probes; at 30s the window was 22s and firefox under thrash could outlive the hog.
+- **Changes:** `scripts/bench.sh` line 8: `TIMEOUT=35`.
+- **Tests / Verification:** `bash -n`, `bench --help` shows new default, `bench-all --dry-run` with no args forwards empty extras (defaults apply).
+
+## 2026-09-26 18:38 - Rework lag/speed metrics: swap-touch + firefox cold-start + pswp deltas
+
+- **What:** Replaced the microsecond-only lag story with three new probes in `bench.sh`: (1) swap-touch buffer (dirty 1536M, sleep 3s to age out, random re-touch timing per-page faults through zram decompress), (2) app cold-start (`firefox --headless --no-remote` screenshot on a fresh profile + `python3` stdlib import timing), (3) swap/stall counters (`pswpin/pswpout/pgmajfault` deltas from `/proc/vmstat` + PSI `total` deltas, not just instant avg10).
+- **Why:** The old 4MB `run_probe` never faulted to zram (~15us flat across all algos, PSI 0/0 in all 22 rows), and `glxgears` was rejected as a metric (RSS ~10MB never swaps, FPS vsync/GPU-bound, needs DISPLAY passthrough). Firefox 156 exists on the box and cold-starts in ~0.75s idle, so it works as a felt-lag proxy.
+- **Changes:** `scripts/bench.sh`: new flags `--probe-mem` (default 1536M, quick 512M, extreme 3072M), `--firefox-timeout 60`, `--no-firefox`; new CSV columns `swap_p50/p99/max_us, firefox_s, python_s, pswpin/out/pgmajfault_delta, psi_some/full_total_delta`. `scripts/bench-all.sh` forwards the three new flags. `scripts/summarize.py` prints/sorts by the new columns (backward-compatible with old fault-only CSVs).
+- **Tests / Verification:** `bash -n` + `bench --help` + `bench-all --dry-run` forwarding OK; old `results-1822` CSV still summarizes. Live smoke: `--quick` run clean (`ff=1.04s`); 10G single-repeat run clean (`bogo=61595/s, pswpout=343k, psi_full_total=419k` — counters catch pressure the old avg10=0 missed). Note: at safe 10G the swap probe stays resident (~1us); faults/tails appear under heavier pressure — raise `--bytes`/`--probe-mem` for stronger discrimination. Test artifacts removed from `results/`.
+
 ## 2026-09-26 17:27 - Default bench hog to safe 10G/30s/8s so plain bench-all won't OOM
 
 - **What:** Changed `bench.sh` built-in defaults from `16G/45s/15s` to `10G/30s/8s` (usage text updated too).
