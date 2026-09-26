@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bench-all.sh - safe sequencer: apply -> bench -> cooldown per algo, restore start algo at end.
-#   devbox run bench-all [--quick] [--extreme] [--repeats N] [--cooldown S] [--dry-run] [--from SPEC] [--no-restore]
+#   devbox run bench-all [--quick] [--extreme] [--repeats N] [--cooldown S] [--bytes SIZE] [--timeout S] [--settle S] [--probe-iters N] [--dry-run] [--from SPEC] [--no-restore]
 set -uo pipefail
 
 MATRIX=(lzo-rle lzo lz4 lz4hc zstd:1 zstd:3 zstd:8 zstd:15 zstd:19 deflate 842)
@@ -8,8 +8,9 @@ REPEATS=""; COOLDOWN=10; DRYRUN=0; FROM=""; RESTORE=1
 BENCH_EXTRA=()
 
 usage() {
-  echo "Usage: devbox run bench-all [--quick] [--extreme] [--repeats N] [--cooldown S] [--dry-run] [--from SPEC] [--no-restore]"
+  echo "Usage: devbox run bench-all [--quick] [--extreme] [--repeats N] [--cooldown S] [--bytes SIZE] [--timeout S] [--settle S] [--probe-iters N] [--dry-run] [--from SPEC] [--no-restore]"
   echo "Matrix: ${MATRIX[*]}"
+  echo "  --bytes/--timeout/--settle/--probe-iters are forwarded to bench.sh (e.g. --bytes 10G for 14GiB RAM boxes)"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -18,6 +19,10 @@ while [[ $# -gt 0 ]]; do
     --extreme) BENCH_EXTRA+=(--extreme); shift ;;
     --repeats) REPEATS="$2"; BENCH_EXTRA+=(--repeats "$2"); shift 2 ;;
     --cooldown) COOLDOWN="$2"; shift 2 ;;
+    --bytes) BENCH_EXTRA+=(--bytes "$2"); shift 2 ;;
+    --timeout) BENCH_EXTRA+=(--timeout "$2"); shift 2 ;;
+    --settle) BENCH_EXTRA+=(--settle "$2"); shift 2 ;;
+    --probe-iters) BENCH_EXTRA+=(--probe-iters "$2"); shift 2 ;;
     --dry-run) DRYRUN=1; shift ;;
     --from) FROM="$2"; shift 2 ;;
     --no-restore) RESTORE=0; shift ;;
