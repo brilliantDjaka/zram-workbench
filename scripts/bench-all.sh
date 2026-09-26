@@ -3,7 +3,7 @@
 #   devbox run bench-all [--quick] [--extreme] [--repeats N] [--cooldown S] [--dry-run] [--from SPEC] [--no-restore]
 set -uo pipefail
 
-MATRIX=(lzo-rle lzo lz4 lz4hc zstd:1 zstd:3 zstd:8 zstd:15 zstd:19 zstd:22 deflate 842)
+MATRIX=(lzo-rle lzo lz4 lz4hc zstd:1 zstd:3 zstd:8 zstd:15 zstd:19 deflate 842)
 REPEATS=""; COOLDOWN=10; DRYRUN=0; FROM=""; RESTORE=1
 BENCH_EXTRA=()
 

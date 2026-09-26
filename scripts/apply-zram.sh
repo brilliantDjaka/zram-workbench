@@ -2,7 +2,7 @@
 # apply-zram.sh - PRIVILEGED zram switcher. Quiesce-checked, restores prev on failure.
 # Usage:
 #   devbox run apply <spec> [--disksize 22.5G] [--dry-run] [--force]
-# Specs: lzo-rle | lzo | lz4 | lz4hc | deflate | 842 | zstd:1 | zstd:3 | zstd:8 | zstd:15 | zstd:19 | zstd:22
+# Specs: lzo-rle | lzo | lz4 | lz4hc | deflate | 842 | zstd:1 | zstd:3 | zstd:8 | zstd:15 | zstd:19
 #   also accepts "zstd(level=8)" style (normalized).
 set -euo pipefail
 
