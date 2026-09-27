@@ -3,6 +3,13 @@
 Diary of completed work on this repo. Newest first: the most recent event
 section sits at the top; older events follow below.
 
+## 2026-09-27 09:27 - Add flowchart.md documenting the bench-all pipeline
+
+- **What:** Added `flowchart.md` at the repo root: five Mermaid diagrams plus supporting tables covering the whole `devbox run bench-all` pipeline. No script was modified.
+- **Why:** The control flow was only reconstructible by reading all three scripts end to end, and the non-obvious parts were not written down anywhere in one place — which flags the sequencer consumes versus merely forwards, why the defaults are 10G/35s/8s, that the probes run *inside* the hog's background window, and that a child failure aborts the matrix **without** restoring the start algorithm.
+- **Changes:** Diagrams: (1) caller overview with the order/state/numbers ownership split; (2) `bench-all.sh` sequencer flow — arg parse, `START_ALGO` capture from sysfs, `--from` truncation, `--dry-run`, the apply → sleep 3 → bench → sync → cooldown loop, restore, summarize; (3) `apply-zram.sh` — spec normalization, whitelist, both OOM guards, and the swapoff → reset → algorithm_params → comp_algorithm → disksize → mkswap → swapon chain; (4) `bench.sh` preflight plus a defaults vs `--quick` vs `--extreme` table with the OOM-safety rationale; (5) a `sequenceDiagram` and ASCII band for one repeat (hog launch, settle, four probes, counter deltas, the 32-column CSV row). Tables cover the exit-code/restore asymmetry, artifacts under `results/`, and run prerequisites. Every node cites `file:line`.
+- **Tests / Verification:** All 5 mermaid blocks rendered via `@mermaid-js/mermaid-cli` with system Chrome — 5/5 pass, no parse errors. All 68 unique `file:line` citations were bounds-checked and resolved to the claimed constructs. Behavior confirmed read-only: `bench-all --dry-run` prints `start_algo=zstd matrix=11 cooldown=10s restore=1 extra=[]` and exactly the 11 documented `apply -> bench --tag -> sleep 10` lines; `--from lz4hc --dry-run` yields 8 specs; unknown flag and unknown `--from` exit 2; `apply zstd:8 --dry-run` prints the documented mutation chain; `bench.sh` outside devbox exits 1 at preflight; `--bytes` with no value trips `set -u` at `bench-all.sh:22` (documented as a known rough edge). Two stale-reference notes recorded: `bench.sh:3` still shows `--timeout 30` while the default is 35, and `START_ALGO` loses any zstd level because sysfs reports bare `zstd`.
+
 ## 2026-09-26 18:45 - Default hog timeout 30s to 35s for swap age-out + firefox room
 
 - **What:** Changed `bench.sh` built-in default `TIMEOUT` from 30 to 35 (usage text updated). `--quick` (20s) and `--extreme` (60s) unchanged.
