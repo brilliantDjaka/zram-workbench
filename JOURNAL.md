@@ -3,6 +3,13 @@
 Diary of completed work on this repo. Newest first: the most recent event
 section sits at the top; older events follow below.
 
+## 2026-09-27 10:06 - Add README.md with quick-start usage
+
+- **What:** Added `README.md` at the repo root: script roles, prereqs, quick-start commands, matrix list, results note.
+- **Why:** Repo had `flowchart.md` and `JOURNAL.md` but no entry-point overview for new users.
+- **Changes:** Single new file `README.md`; no scripts modified.
+- **Tests / Verification:** Content checked against `devbox.json`, `scripts/bench-all.sh` (matrix, flags), `scripts/status.sh`, and `.gitignore`; not executed.
+
 ## 2026-09-27 09:27 - Add flowchart.md documenting the bench-all pipeline
 
 - **What:** Added `flowchart.md` at the repo root: five Mermaid diagrams plus supporting tables covering the whole `devbox run bench-all` pipeline. No script was modified.
